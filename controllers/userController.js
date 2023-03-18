@@ -316,7 +316,7 @@ export const deleteMyProfile = catchAsyncErrors(async (req, res, next) => {
       message: "User Deleted Successfully",
     });
 });
-// watcher
+// watcher by mongodb
 User.watch().on("change", async () => {
   const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(1);
   const subscription = await User.find({ "subscription.status": "active" });
