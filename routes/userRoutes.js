@@ -51,7 +51,9 @@ router
   .delete(isAuthenticatedUser, removeFromPlaylist);
 
 // admin routes
-router.route("/admin/users").get(getAllUsers);
+router
+  .route("/admin/users")
+  .get(isAuthenticatedUser, authorizeAdmin, getAllUsers);
 router
   .route("/admin/user/:id")
   .put(isAuthenticatedUser, authorizeAdmin, updateUserRole)
