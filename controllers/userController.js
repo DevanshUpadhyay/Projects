@@ -64,8 +64,8 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      // domain: "https://online-video-teaching-streaming-platform.vercel.app",
-      // path: "/",
+      domain: "https://online-video-teaching-streaming-platform.vercel.app",
+      path: "/",
     })
     .json({
       success: true,
