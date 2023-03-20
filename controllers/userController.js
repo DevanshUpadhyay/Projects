@@ -57,7 +57,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 });
 // Logout User
 export const logout = catchAsyncErrors(async (req, res, next) => {
-  cookie = req.cookies;
+  const cookie = req.cookies;
   for (var prop in cookie) {
     if (!cookie.hasOwnProperty(prop)) {
       continue;
