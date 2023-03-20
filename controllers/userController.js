@@ -59,7 +59,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(200)
-    .cookie("token", {
+    .cookie("token", null, {
       expires: new Date(0),
       // maxAge: -1,
       httpOnly: true,
