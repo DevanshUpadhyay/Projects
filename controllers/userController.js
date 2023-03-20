@@ -59,11 +59,13 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(200)
-    .cookie("token", null, {
-      expires: new Date(Date.now()),
+    .cookie("token", "", {
+      expires: new Date(0),
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: "https://online-video-teaching-streaming-platform.vercel.app",
+      path: "/",
     })
     .json({
       success: true,
