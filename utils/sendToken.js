@@ -18,8 +18,8 @@ export const sendToken = (res, user, message, statusCode = 200) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: "online-video-teaching-streaming-platform.vercel.app",
-      path: "/",
+      // domain: "online-video-teaching-streaming-platform.vercel.app",
+      // path: "/",
     })
     .json({
       success: true,
