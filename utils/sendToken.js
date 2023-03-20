@@ -11,17 +11,16 @@ export const sendToken = (res, user, message, statusCode = 200) => {
   res
     .status(statusCode)
     .cookie("token", token, {
-      // expires: new Date(
-      //   Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-      // ),
-      maxAge: 1000 * 60 * 5,
+      expires: new Date(
+        Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      ),
+      // maxAge: 1000 * 60 * 5,
       httpOnly: true,
-      // secure: true,
-      // sameSite: "none",
+      secure: true,
+      sameSite: "none",
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
-    .redirect("/")
     .json({
       success: true,
       message,

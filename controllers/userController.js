@@ -59,16 +59,15 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(200)
-    .clearCookie("token", {
-      // expires: new Date(0),
-      maxAge: -1,
+    .cookie("token", null, {
+      expires: new Date(Date.now()),
+      // maxAge: -1,
       httpOnly: true,
-      // secure: true,
-      // sameSite: "none",
+      secure: true,
+      sameSite: "none",
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
-    .redirect("/")
     .json({
       success: true,
       messsage: "Logged Out Successfully",
