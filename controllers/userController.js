@@ -62,7 +62,13 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     if (!cookie.hasOwnProperty(prop)) {
       continue;
     }
-    res.cookie(prop, "", { expires: new Date(0) });
+    res.cookie(prop, "", {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: "online-video-teaching-streaming-platform.vercel.app",
+    });
   }
   res.redirect("/");
   // res
