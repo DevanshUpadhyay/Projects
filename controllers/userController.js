@@ -60,10 +60,11 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(200)
     .clearCookie("token", {
-      expires: new Date(0),
+      // expires: new Date(0),
+      maxAge: -1,
       httpOnly: true,
       secure: true,
-      // sameSite: "none",ne
+      // sameSite: "none",
       domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
