@@ -57,7 +57,9 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 });
 // Logout User
 export const logout = catchAsyncErrors(async (req, res, next) => {
-  res.status(200).clearCookie("token").json({
+  res.clearCookie("token");
+  await req.user.save();
+  res.status(200).json({
     success: true,
     messsage: "Logged Out Successfully",
   });
