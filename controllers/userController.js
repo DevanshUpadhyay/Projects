@@ -57,20 +57,10 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 });
 // Logout User
 export const logout = catchAsyncErrors(async (req, res, next) => {
-  res
-    .status(200)
-    .cookie("token", null, {
-      expires: new Date(0),
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      // domain: "https://online-video-teaching-streaming-platform.vercel.app",
-      // path: "/",
-    })
-    .json({
-      success: true,
-      messsage: "Logged Out Successfully",
-    });
+  res.status(200).clearCookie("token").json({
+    success: true,
+    messsage: "Logged Out Successfully",
+  });
 });
 // Get User Details
 export const getmyProfile = catchAsyncErrors(async (req, res, next) => {
