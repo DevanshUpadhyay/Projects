@@ -63,8 +63,8 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
       expires: new Date(0),
       httpOnly: true,
       secure: true,
-      sameSite: "Strict",
-      domain: "https://online-video-teaching-streaming-platform.vercel.app",
+      sameSite: "none",
+      // domain: "https://online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
     .json({
