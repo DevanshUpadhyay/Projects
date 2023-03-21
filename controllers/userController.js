@@ -68,6 +68,15 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
+    .clearCookie("token", {
+      expires: new Date(Date.now()),
+      // maxAge: -1,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      // domain: "online-video-teaching-streaming-platform.vercel.app",
+      // path: "/",
+    })
     .json({
       success: true,
       messsage: "Logged Out Successfully",
