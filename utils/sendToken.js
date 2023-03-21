@@ -17,7 +17,7 @@ export const sendToken = (res, user, message, statusCode = 200) => {
       // maxAge: 1000 * 60 * 5,
       httpOnly: true,
       secure: true,
-      sameSite: "Strict",
+      sameSite: "None",
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
