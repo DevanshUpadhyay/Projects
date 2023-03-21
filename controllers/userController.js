@@ -59,15 +59,16 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(200)
-    .cookie("token", null, {
-      expires: new Date(Date.now()),
-      // maxAge: -1,
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      // domain: "online-video-teaching-streaming-platform.vercel.app",
-      // path: "/",
-    })
+    .clearCookie()
+    // .cookie("token", null, {
+    // expires: new Date(Date.now()),
+    // maxAge: -1,
+    // httpOnly: true,
+    // secure: true,
+    // sameSite: "Strict",
+    // domain: "online-video-teaching-streaming-platform.vercel.app",
+    // path: "/",
+    // })
     // .clearCookie("token", {
     //   expires: new Date(Date.now()),
     //   maxAge: -1,
