@@ -40,9 +40,9 @@ router
   .put(isAuthenticatedUser, singleUpload, updateProfilePicture);
 // forget password
 // reset password
-router.route("/password/forgot").post(forgotPassword);
+router.route("/forgetpassword").post(forgotPassword);
 
-router.route("/password/reset/:token").put(resetPassword);
+router.route("/resetpassword/:token").put(resetPassword);
 // add to playlist
 router.route("/addtoplaylist").post(isAuthenticatedUser, addToPlaylist);
 // remove from playlist

@@ -65,7 +65,7 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
       // maxAge: -1,
       httpOnly: true,
       secure: true,
-      sameSite: "None",
+      sameSite: "none",
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })
@@ -93,7 +93,7 @@ export const getmyProfile = catchAsyncErrors(async (req, res, next) => {
 });
 // change/update password
 export const changePassword = catchAsyncErrors(async (req, res, next) => {
-  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const { oldPassword, newPassword } = req.body;
   if (!oldPassword || !newPassword) {
     return next(new ErrorHandler("Please enter all fields", 400));
   }
@@ -104,9 +104,7 @@ export const changePassword = catchAsyncErrors(async (req, res, next) => {
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Old Password is incorect", 400));
   }
-  if (newPassword !== confirmPassword) {
-    return next(new ErrorHandler("Password does not match", 400));
-  }
+
   user.password = newPassword;
   await user.save();
   res.status(200).json({
@@ -166,9 +164,11 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const resetToken = await user.getResetPasswordToken();
   //   const url = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
   await user.save({ validateBeforeSave: false });
-  const resetPasswordUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/password/reset/${resetToken}`;
+  // const resetPasswordUrl = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/v1/resetpassword/${resetToken}`;
+  const resetPasswordUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
+
   const message = `Your password reset token is :-\n\n ${resetPasswordUrl} \n\n If you did not request this email then please ignore it`;
 
   try {
@@ -205,9 +205,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
-  if (req.body.password !== req.body.confirmPassword) {
-    return next(new ErrorHandler("Password dose not match", 400));
-  }
+
   user.password = req.body.password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
@@ -229,9 +227,7 @@ export const addToPlaylist = catchAsyncErrors(async (req, res, next) => {
     if (item.course.toString() === course._id.toString()) return true;
   });
   if (itemExist) {
-    return next(
-      new ErrorHandler("This course is already added to your playlist", 409)
-    );
+    return next(new ErrorHandler("Item Alredy Exist", 409));
   }
   user.playlist.push({
     course: course._id,
