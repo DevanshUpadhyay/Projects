@@ -6,6 +6,7 @@ import {
   deleteLecture,
   getAllCourses,
   getCourseLectures,
+  getDemoLecture,
 } from "../controllers/coursecontroller.js";
 import {
   authorizeAdmin,
@@ -26,6 +27,7 @@ router
   .get(isAuthenticatedUser, authorizeSubscribers, getCourseLectures)
   .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addlecture)
   .delete(isAuthenticatedUser, authorizeAdmin, deleteCourse);
+router.route("/coursedemo/:id").get(isAuthenticatedUser, getDemoLecture);
 router
   .route("/lecture")
   .delete(isAuthenticatedUser, authorizeAdmin, deleteLecture);

@@ -66,6 +66,19 @@ export const getCourseLectures = catchAsyncErrors(async (req, res, next) => {
     lectures: course.lectures,
   });
 });
+// demo free lecture
+export const getDemoLecture = catchAsyncErrors(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  course.views += 1;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    lectures: course.lectures,
+  });
+});
 // add lectures to course
 export const addlecture = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
