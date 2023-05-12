@@ -1,10 +1,16 @@
 import express from "express";
 import {
+  addCourseContent,
+  addCourseLearnings,
+  addCourseSections,
+  addSectionlecture,
   addlecture,
   createCourse,
   deleteCourse,
   deleteLecture,
   getAllCourses,
+  getCourseContent,
+  getCourseLearning,
   getCourseLectures,
   getDemoLecture,
 } from "../controllers/coursecontroller.js";
@@ -29,6 +35,17 @@ router
   .delete(isAuthenticatedUser, authorizeAdmin, deleteCourse);
 router.route("/coursedemo/:id").get(isAuthenticatedUser, getDemoLecture);
 router
+  .route("/courselearning/:id")
+  .post(isAuthenticatedUser, authorizeAdmin, addCourseLearnings)
+  .get(isAuthenticatedUser, getCourseLearning);
+
+router
+  .route("/coursecontent/:id")
+  .post(isAuthenticatedUser, authorizeAdmin, addCourseContent)
+  .get(isAuthenticatedUser, getCourseContent);
+router
   .route("/lecture")
   .delete(isAuthenticatedUser, authorizeAdmin, deleteLecture);
+router.route("/coursesection/:id").post(addCourseSections);
+router.route("/lecture/:id/:sid").post(singleUpload, addSectionlecture);
 export default router;

@@ -14,25 +14,38 @@ export const register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
   const file = req.file;
 
-  if (!name || !email || !password || !file) {
+  if (!name || !email || !password) {
     return next(new ErrorHandler("Please add all fields", 400));
   }
   let user = await User.findOne({ email });
   if (user) {
     return next(new ErrorHandler("User Already Exist", 409));
   }
-  const fileUri = getDataUri(file);
-  const myCloud = await cloudinary.v2.uploader.upload(fileUri.content);
+  if (file) {
+    const fileUri = getDataUri(file);
+    const myCloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
-  user = await User.create({
-    name,
-    email,
-    password,
-    avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    },
-  });
+    user = await User.create({
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
+    });
+  } else {
+    user = await User.create({
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: "wio3q9ttzqfj66po9yoo",
+        url: "https://res.cloudinary.com/dcej7jjak/image/upload/v1680251049/wio3q9ttzqfj66po9yoo.png",
+      },
+    });
+  }
+
   sendToken(res, user, "Registered Successfully", 201);
 });
 // login
@@ -63,9 +76,9 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", null, {
       expires: new Date(Date.now()),
       // maxAge: -1,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "none",
       // domain: "online-video-teaching-streaming-platform.vercel.app",
       // path: "/",
     })

@@ -3,8 +3,14 @@ import { User } from "../models/User.js";
 import { Payment } from "../models/Payment.js";
 import { instance } from "../server.js";
 import crypto from "crypto";
+import { Course } from "../models/Course.js";
 export const buySubscription = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user._id);
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Invalid Course Id", 404));
+  }
+  // const course_id=req.params.id;
   if (user.role === "admin") {
     return next(new ErrorHandler("Admin can't buy subscription", 400));
   }
@@ -15,9 +21,19 @@ export const buySubscription = catchAsyncErrors(async (req, res, next) => {
     customer_notify: 1,
     total_count: 12,
   });
-  user.subscription.id = subscription.id;
-  user.subscription.status = subscription.status;
+  // user.subscription.id = subscription.id;
+  // user.subscription.status = subscription.status;
+  // user.subscription.course_id = req.params.id;
+
+  user.subscription.push({
+    id: subscription.id,
+    status: subscription.status,
+    course_id: req.params.id,
+    poster: course.poster.url,
+  });
   await user.save();
+  course.subscriptions += 1;
+  await course.save();
 
   res.status(201).json({
     success: true,
@@ -29,7 +45,7 @@ export const paymentVerification = catchAsyncErrors(async (req, res, next) => {
   const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
     req.body;
   const user = await User.findById(req.user._id);
-  const subscription_id = user.subscription.id;
+  const subscription_id = user.subscription[user.subscription.length - 1].id;
   const generated_signature = crypto
     .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
     .update((razorpay_payment_id + "|" + subscription_id).toString())
@@ -44,7 +60,8 @@ export const paymentVerification = catchAsyncErrors(async (req, res, next) => {
     razorpay_payment_id,
     razorpay_subscription_id,
   });
-  user.subscription.status = "active";
+
+  user.subscription[user.subscription.length - 1].status = "active";
   await user.save();
   res.redirect(
     `${process.env.FRONTEND_URL}/paymentsuccess?reference=${razorpay_payment_id}`

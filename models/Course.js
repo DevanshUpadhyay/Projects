@@ -12,6 +12,66 @@ const schema = new mongoose.Schema({
     required: [true, "Please Enter Description"],
     minLength: [20, "Description should have more than 20 characters"],
   },
+  language: {
+    type: String,
+    required: [true, "Please Enter Course Language"],
+  },
+  sections: [
+    {
+      title: {
+        type: String,
+        required: [true, "Please Enter Lecture Title"],
+      },
+      description: {
+        type: String,
+        required: [true, "Please Enter Description"],
+        minLength: [20, "Description should have more than 20 characters"],
+      },
+      lectures: [
+        {
+          title: {
+            type: String,
+            required: [true, "Please Enter Lecture Title"],
+          },
+          description: {
+            type: String,
+            required: [true, "Please Enter Description"],
+            minLength: [20, "Description should have more than 20 characters"],
+          },
+          video: {
+            public_id: {
+              type: String,
+              required: true,
+            },
+            url: {
+              type: String,
+              required: true,
+            },
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+    },
+  ],
+  details: {
+    learningPoints: [
+      {
+        points: {
+          type: String,
+        },
+      },
+    ],
+    content: [
+      {
+        points: {
+          type: String,
+        },
+      },
+    ],
+  },
   lectures: [
     {
       title: {
@@ -33,6 +93,10 @@ const schema = new mongoose.Schema({
           required: true,
         },
       },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
   poster: {
@@ -46,6 +110,10 @@ const schema = new mongoose.Schema({
     },
   },
   views: {
+    type: Number,
+    default: 0,
+  },
+  subscriptions: {
     type: Number,
     default: 0,
   },

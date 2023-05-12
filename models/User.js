@@ -27,10 +27,14 @@ const schema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
-  subscription: {
-    id: String,
-    status: String,
-  },
+  subscription: [
+    {
+      id: String,
+      status: String,
+      course_id: String,
+      poster: String,
+    },
+  ],
   avatar: {
     public_id: {
       type: String,

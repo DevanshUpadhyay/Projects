@@ -26,9 +26,9 @@ export const getAllCourses = catchAsyncErrors(async (req, res, next) => {
 });
 // craete new courses
 export const createCourse = catchAsyncErrors(async (req, res, next) => {
-  const { title, description, category, createdBy } = req.body;
+  const { title, description, category, createdBy, language } = req.body;
 
-  if (!title || !description || !category || !createdBy) {
+  if (!title || !description || !category || !createdBy || !language) {
     return next(new ErrorHandler("Please add all fields", 400));
   }
 
@@ -42,6 +42,7 @@ export const createCourse = catchAsyncErrors(async (req, res, next) => {
     description,
     category,
     createdBy,
+    language,
     poster: {
       public_id: myCloud.public_id,
       url: myCloud.secure_url,
@@ -66,17 +67,52 @@ export const getCourseLectures = catchAsyncErrors(async (req, res, next) => {
     lectures: course.lectures,
   });
 });
+// add demo lectures to course
+export const addDemoLecture = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+
+  // upload file here
+  const file = req.file;
+  if (!title || !description) {
+    return next(new ErrorHandler("Please add all fields", 400));
+  }
+  const fileUri = getDataUri(file);
+  const myCloud = await cloudinary.v2.uploader.upload(fileUri.content, {
+    resource_type: "video",
+  });
+
+  course.lectures.push({
+    title,
+    description,
+    video: {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    },
+  });
+  course.numOfVideos = course.lectures.length;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Lecture added in Course",
+  });
+});
 // demo free lecture
 export const getDemoLecture = catchAsyncErrors(async (req, res, next) => {
   const course = await Course.findById(req.params.id);
   if (!course) {
     return next(new ErrorHandler("Course not found", 404));
   }
-  course.views += 1;
+
   await course.save();
   res.status(200).json({
     success: true,
-    lectures: course.lectures,
+    singleCourse: course,
   });
 });
 // add lectures to course
@@ -171,6 +207,137 @@ export const deleteLecture = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Lecture Deleted Successfully.",
+  });
+});
+
+// details
+export const addCourseLearnings = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const { learning } = req.body;
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  if (!learning) {
+    return next(new ErrorHandler("Please add all fields", 400));
+  }
+  course.details.learningPoints.push({
+    points: learning,
+  });
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Learning Points added in Course",
+  });
+});
+export const addCourseContent = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const { include } = req.body;
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  if (!include) {
+    return next(new ErrorHandler("Please add all fields", 400));
+  }
+  course.details.content.push({
+    points: include,
+  });
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Content Points added in Course",
+  });
+});
+// get course larning points
+export const getCourseLearning = catchAsyncErrors(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  // course.views += 1;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    learning: course.details.learningPoints,
+  });
+});
+
+// get course content poiunts
+export const getCourseContent = catchAsyncErrors(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  // course.views += 1;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    content: course.details.content,
+  });
+});
+// add sections in the course
+export const addCourseSections = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  if (!title || !description) {
+    return next(new ErrorHandler("Please add all fields", 400));
+  }
+  course.sections.push({
+    title,
+    description,
+  });
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Section added in Course",
+  });
+});
+// add lectures to section
+export const addSectionlecture = catchAsyncErrors(async (req, res, next) => {
+  const { id, sid } = req.params;
+  const { title, description } = req.body;
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  var index = false;
+  for (let i = 0; i < course.sections.length; i++) {
+    if (String(course.sections[i]._id) === String(sid)) {
+      index = i;
+    }
+  }
+
+  if (!index && index !== 0) {
+    return next(new ErrorHandler("Section not found", 404));
+  }
+  // upload file here
+  const file = req.file;
+
+  const fileUri = getDataUri(file);
+  const myCloud = await cloudinary.v2.uploader.upload(fileUri.content, {
+    resource_type: "video",
+  });
+  // if (!title || !description) {
+  //   return next(new ErrorHandler("Please add all fields", 400));
+  // }
+  course.sections[index].lectures.push({
+    title,
+    description,
+    video: {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    },
+  });
+  // course.numOfVideos = course.lectures.length;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Lecture added in Course Section",
   });
 });
 // watcher
