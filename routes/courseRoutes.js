@@ -8,11 +8,13 @@ import {
   createCourse,
   deleteCourse,
   deleteLecture,
+  deleteSectionLecture,
   getAllCourses,
   getCourseContent,
   getCourseLearning,
   getCourseLectures,
   getDemoLecture,
+  getSectionLectures,
 } from "../controllers/coursecontroller.js";
 import {
   authorizeAdmin,
@@ -30,7 +32,8 @@ router
 // get lecture of the course
 router
   .route("/course/:id")
-  .get(isAuthenticatedUser, authorizeSubscribers, getCourseLectures)
+  // .get(isAuthenticatedUser, authorizeSubscribers, getCourseLectures)
+  .get(isAuthenticatedUser, getCourseLectures)
   .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addlecture)
   .delete(isAuthenticatedUser, authorizeAdmin, deleteCourse);
 router.route("/coursedemo/:id").get(isAuthenticatedUser, getDemoLecture);
@@ -43,9 +46,15 @@ router
   .route("/coursecontent/:id")
   .post(isAuthenticatedUser, authorizeAdmin, addCourseContent)
   .get(isAuthenticatedUser, getCourseContent);
+// router
+//   .route("/lecture")
+//   .delete(isAuthenticatedUser, authorizeAdmin, deleteLecture);
+router.route("/coursesection/:id").post(addCourseSections);
+router
+  .route("/lecture/:id/:sid")
+  .get(isAuthenticatedUser, getSectionLectures)
+  .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addSectionlecture);
 router
   .route("/lecture")
-  .delete(isAuthenticatedUser, authorizeAdmin, deleteLecture);
-router.route("/coursesection/:id").post(addCourseSections);
-router.route("/lecture/:id/:sid").post(singleUpload, addSectionlecture);
+  .delete(isAuthenticatedUser, authorizeAdmin, deleteSectionLecture);
 export default router;

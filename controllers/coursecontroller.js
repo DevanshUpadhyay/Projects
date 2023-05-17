@@ -146,7 +146,7 @@ export const addlecture = catchAsyncErrors(async (req, res, next) => {
       url: myCloud.secure_url,
     },
   });
-  course.numOfVideos = course.lectures.length;
+  // course.numOfVideos = course.lectures.length;
   await course.save();
   res.status(200).json({
     success: true,
@@ -333,13 +333,83 @@ export const addSectionlecture = catchAsyncErrors(async (req, res, next) => {
       url: myCloud.secure_url,
     },
   });
-  // course.numOfVideos = course.lectures.length;
+  course.numOfVideos = course.numOfVideos + 1;
   await course.save();
   res.status(200).json({
     success: true,
     message: "Lecture added in Course Section",
   });
 });
+// get sections lecture of the course
+export const getSectionLectures = catchAsyncErrors(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  var index = false;
+  for (let i = 0; i < course.sections.length; i++) {
+    if (String(course.sections[i]._id) === String(req.params.sid)) {
+      index = i;
+    }
+  }
+
+  if (!index && index !== 0) {
+    return next(new ErrorHandler("Section not found", 404));
+  }
+  course.views += 1;
+  await course.save();
+  res.status(200).json({
+    success: true,
+    lectures: course.sections[index].lectures,
+  });
+});
+// delete lectures from the course section
+export const deleteSectionLecture = catchAsyncErrors(async (req, res, next) => {
+  const { courseId, sectionId, lectureId } = req.query;
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  //
+  var index = false;
+  for (let i = 0; i < course.sections.length; i++) {
+    if (String(course.sections[i]._id) === String(sectionId)) {
+      index = i;
+    }
+  }
+
+  if (!index && index !== 0) {
+    return next(new ErrorHandler("Section not found", 404));
+  }
+
+  const lecture = course.sections[index].lectures.find((item) => {
+    if (item._id.toString() === lectureId.toString()) {
+      return item;
+    }
+  });
+  if (!lecture) {
+    return next(new ErrorHandler("Lecture not found", 404));
+  }
+  await cloudinary.v2.uploader.destroy(lecture.video.public_id, {
+    resource_type: "video",
+  });
+
+  course.sections[index].lectures = course.sections[index].lectures.filter(
+    (item) => {
+      if (item._id.toString() !== lectureId.toString()) {
+        return item;
+      }
+    }
+  );
+  course.numOfVideos = course.numOfVideos - 1;
+  await course.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Lecture Deleted Successfully.",
+  });
+});
+
 // watcher
 Course.watch().on("change", async () => {
   const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(1);

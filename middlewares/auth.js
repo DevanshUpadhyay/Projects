@@ -31,5 +31,6 @@ export const authorizeSubscribers = (req, res, next) => {
       new ErrorHandler(`Only Subscriber can access this resource`, 403)
     );
   }
+
   next();
 };
