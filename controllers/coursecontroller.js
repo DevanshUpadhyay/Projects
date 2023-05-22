@@ -18,7 +18,9 @@ export const getAllCourses = catchAsyncErrors(async (req, res, next) => {
       $regex: category,
       $options: "i",
     },
-  }).select("-lectures");
+  })
+    .select("-lectures")
+    .sort({ createdAt: "desc" });
   res.status(200).json({
     success: true,
     courses,
@@ -46,6 +48,10 @@ export const createCourse = catchAsyncErrors(async (req, res, next) => {
     poster: {
       public_id: myCloud.public_id,
       url: myCloud.secure_url,
+    },
+    demo: {
+      public_id: 0,
+      url: 0,
     },
   });
 
@@ -163,11 +169,13 @@ export const deleteCourse = catchAsyncErrors(async (req, res, next) => {
 
   await cloudinary.v2.uploader.destroy(course.poster.public_id);
 
-  for (let i = 0; i < course.lectures.length; i++) {
-    const singleLecture = course.lectures[i];
-    await cloudinary.v2.uploader.destroy(singleLecture.video.public_id, {
-      resource_type: "video",
-    });
+  for (let i = 0; i < course.sections.length; i++) {
+    for (let j = 0; j < course.sections[i].lectures.length; j++) {
+      const singleLecture = course.sections[i].lectures[j];
+      await cloudinary.v2.uploader.destroy(singleLecture.video.public_id, {
+        resource_type: "video",
+      });
+    }
   }
   await course.deleteOne();
 
@@ -295,6 +303,74 @@ export const addCourseSections = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Section added in Course",
+  });
+});
+// delete lectures from the course section
+export const deleteSection = catchAsyncErrors(async (req, res, next) => {
+  const { courseId, sectionId } = req.query;
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+  //
+  var index = false;
+  for (let i = 0; i < course.sections.length; i++) {
+    if (String(course.sections[i]._id) === String(sectionId)) {
+      index = i;
+    }
+  }
+
+  if (!index && index !== 0) {
+    return next(new ErrorHandler("Section not found", 404));
+  }
+  let count = 0;
+  for (let i = 0; i < course.sections[index].lectures.length; i++) {
+    count++;
+    const singleLecture = course.sections[index].lectures[i];
+    await cloudinary.v2.uploader.destroy(singleLecture.video.public_id, {
+      resource_type: "video",
+    });
+  }
+  await course.sections[index].deleteOne();
+  // course.sections[index].lectures = course.sections[index].lectures.filter(
+  //   (item) => {
+  //     if (item._id.toString() !== lectureId.toString()) {
+  //       return item;
+  //     }
+  //   }
+  // );
+
+  course.numOfVideos = course.numOfVideos - count;
+  await course.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Section Deleted Successfully.",
+  });
+});
+// add demo
+export const addDemo = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const course = await Course.findById(id);
+  if (!course) {
+    return next(new ErrorHandler("Course not found", 404));
+  }
+
+  // upload file here
+  const file = req.file;
+
+  const fileUri = getDataUri(file);
+  const myCloud = await cloudinary.v2.uploader.upload(fileUri.content, {
+    resource_type: "video",
+  });
+
+  course.demo.public_id = myCloud.public_id;
+  course.demo.url = myCloud.secure_url;
+
+  await course.save();
+  res.status(200).json({
+    success: true,
+    message: "Course Demo Added Successfully",
   });
 });
 // add lectures to section

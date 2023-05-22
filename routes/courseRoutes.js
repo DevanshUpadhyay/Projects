@@ -3,11 +3,13 @@ import {
   addCourseContent,
   addCourseLearnings,
   addCourseSections,
+  addDemo,
   addSectionlecture,
   addlecture,
   createCourse,
   deleteCourse,
   deleteLecture,
+  deleteSection,
   deleteSectionLecture,
   getAllCourses,
   getCourseContent,
@@ -57,4 +59,10 @@ router
 router
   .route("/lecture")
   .delete(isAuthenticatedUser, authorizeAdmin, deleteSectionLecture);
+router
+  .route("/section")
+  .delete(isAuthenticatedUser, authorizeAdmin, deleteSection);
+router
+  .route("/demo/:id")
+  .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addDemo);
 export default router;

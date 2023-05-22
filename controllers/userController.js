@@ -99,6 +99,17 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
 // Get User Details
 export const getmyProfile = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user._id);
+  // const courses = await Course.find();
+  let count = user.subscription.length;
+  for (let i = 0; i < count; i++) {
+    const course = await Course.findById(user.subscription[i].course_id);
+    if (!course) {
+      await user.subscription[i].deleteOne();
+      i = i - 1;
+      count--;
+    }
+  }
+  await user.save();
   res.status(200).json({
     success: true,
     user,

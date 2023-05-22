@@ -99,6 +99,14 @@ const schema = new mongoose.Schema({
       },
     },
   ],
+  demo: {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
   poster: {
     public_id: {
       type: String,
