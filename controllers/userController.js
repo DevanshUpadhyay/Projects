@@ -79,7 +79,7 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: "online-video-teaching-streaming-platform.vercel.app",
+      // domain: "https://www.techvisor.in",
       path: "/",
     })
     // .clearCookie("token", {
