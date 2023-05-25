@@ -76,11 +76,11 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", null, {
       expires: new Date(Date.now()),
       // maxAge: -1,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "none",
       // domain: "https://www.techvisor.in",
-      path: "/",
+      // path: "/",
     })
     // .clearCookie("token", {
     //   expires: new Date(Date.now()),
