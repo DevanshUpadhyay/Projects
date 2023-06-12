@@ -4,6 +4,10 @@ import getDataUri from "../utils/dataUri.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import cloudinary from "cloudinary";
 import { Stats } from "../models/Stats.js";
+import { Vimeo } from "vimeo";
+import fs from "fs";
+import axios from "axios";
+
 // get all courses
 export const getAllCourses = catchAsyncErrors(async (req, res, next) => {
   const keyword = req.query.keyword || "";
@@ -393,8 +397,10 @@ export const addSectionlecture = catchAsyncErrors(async (req, res, next) => {
   }
   // upload file here
   const file = req.file;
-
+  // console.log(file);
   const fileUri = getDataUri(file);
+  console.log(fileUri);
+
   const myCloud = await cloudinary.v2.uploader.upload(fileUri.content, {
     resource_type: "video",
   });
@@ -416,6 +422,68 @@ export const addSectionlecture = catchAsyncErrors(async (req, res, next) => {
     message: "Lecture added in Course Section",
   });
 });
+// add lectures to section
+// export const addSectionlectureVimeo = catchAsyncErrors(
+//   async (req, res, next) => {
+//     const { id, sid } = req.params;
+
+//     const course = await Course.findById(id);
+//     if (!course) {
+//       return next(new ErrorHandler("Course not found", 404));
+//     }
+//     var index = false;
+//     for (let i = 0; i < course.sections.length; i++) {
+//       if (String(course.sections[i]._id) === String(sid)) {
+//         index = i;
+//       }
+//     }
+
+//     if (!index && index !== 0) {
+//       return next(new ErrorHandler("Section not found", 404));
+//     }
+//     // upload file here
+
+//     let client = new Vimeo(
+//       process.env.client_id,
+//       process.env.client_secret,
+//       process.env.access_token
+//     );
+//     async function uploadVideo(filePath) {
+//       try {
+//         // Step 1: Upload the video file
+//         const uploadResponse = await axios({
+//           method: "post",
+//           url: "https://api.vimeo.com/me/videos",
+//           headers: {
+//             Authorization: `Bearer ${accessToken}`,
+//             "Content-Type": "application/json",
+//             Accept: "application/vnd.vimeo.*+json;version=3.4",
+//           },
+//           data: {
+//             upload: {
+//               approach: "tus",
+//               size: fs.statSync(filePath).size,
+//             },
+//           },
+//         });
+
+//         console.log("Video uploaded successfully!");
+//       } catch (error) {
+//         console.log("Error uploading video:");
+//       }
+//     }
+//     const file = req.file;
+//     const fileUri = getDataUri(file);
+//     const videoFilePath = file;
+//     uploadVideo(videoFilePath);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Lecture added in Course Section",
+//       // uri: videoUri,
+//     });
+//   }
+// );
 // get sections lecture of the course
 export const getSectionLectures = catchAsyncErrors(async (req, res, next) => {
   const course = await Course.findById(req.params.id);

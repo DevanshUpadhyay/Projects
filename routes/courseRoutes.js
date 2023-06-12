@@ -65,4 +65,5 @@ router
 router
   .route("/demo/:id")
   .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addDemo);
+// router.route("/vimeo/:id/:sid").post(singleUpload, addSectionlectureVimeo);
 export default router;
