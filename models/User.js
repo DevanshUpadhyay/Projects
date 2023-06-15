@@ -22,10 +22,23 @@ const schema = new mongoose.Schema({
     minLength: [8, "Password should be greater than 8 characters"],
     select: false,
   },
+  otp: {
+    type: Number,
+    default: null,
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
   role: {
     type: String,
     enum: ["admin", "user"],
     default: "user",
+  },
+  plan: {
+    type: String,
+    enum: ["inactive", "active"],
+    default: "inactive",
   },
   subscription: [
     {

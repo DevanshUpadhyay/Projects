@@ -21,6 +21,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
   if (user) {
     return next(new ErrorHandler("User Already Exist", 409));
   }
+
   if (file) {
     const fileUri = getDataUri(file);
     const myCloud = await cloudinary.v2.uploader.upload(fileUri.content);
@@ -300,17 +301,17 @@ export const updateUserRole = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("User Not Found", 404));
   }
 
-  if (user.role === "user") {
-    user.role = "admin";
+  if (user.plan === "inactive") {
+    user.plan = "active";
   } else {
-    user.role = "user";
+    user.plan = "inactive";
   }
   await user.save();
   res.status(200).json({
     success: true,
-    message: `Role is changed from ${
-      user.role === "user" ? "admin" : "user"
-    } to ${user.role === "user" ? "user" : "admin"}`,
+    message: `Plan is changed from ${
+      user.plan === "inactive" ? "active" : "inactive"
+    } to ${user.plan === "inactive" ? "inactive" : "active"}`,
   });
 });
 

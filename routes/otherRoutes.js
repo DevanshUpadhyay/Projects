@@ -3,6 +3,8 @@ import {
   contact,
   courseRequest,
   getDashboardStats,
+  sendOtp,
+  verifyOtp,
 } from "../controllers/otherController.js";
 import { isAuthenticatedUser } from "../middlewares/auth.js";
 
@@ -14,5 +16,8 @@ router.route("/contact").post(contact);
 router.route("/courserequest").post(courseRequest);
 // get admin dashboard stats
 router.route("/admin/stats").get(isAuthenticatedUser, getDashboardStats);
+// otp form
+router.route("/sendotp").post(isAuthenticatedUser, sendOtp);
+router.route("/verifyotp").post(isAuthenticatedUser, verifyOtp);
 
 export default router;
