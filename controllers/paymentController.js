@@ -101,3 +101,15 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
       : "Subscription cancelled,No refund initiated as subscription was cancelled after 7 days.",
   });
 });
+// paypal integration
+export const getPayerId = catchAsyncErrors(async (req, res, next) => {
+  // const { PayerID } = req.query;
+  const user = await User.findById(req.user._id);
+  user.payerId = req.query.PayerID;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Subscribed Successfully",
+  });
+});

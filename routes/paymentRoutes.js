@@ -2,6 +2,7 @@ import express from "express";
 import {
   buySubscription,
   cancelSubscription,
+  getPayerId,
   getRazorPayKey,
   paymentVerification,
 } from "../controllers/paymentController.js";
@@ -21,5 +22,5 @@ router.route("/razorpaykey").get(getRazorPayKey);
 router
   .route("/subscribe/cancel")
   .delete(isAuthenticatedUser, cancelSubscription);
-
+router.route("/payment").post(isAuthenticatedUser, getPayerId);
 export default router;
