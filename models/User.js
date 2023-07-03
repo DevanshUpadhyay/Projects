@@ -30,10 +30,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  payerId: {
-    type: String,
-    default: null,
-  },
+
   role: {
     type: String,
     enum: ["admin", "user"],
