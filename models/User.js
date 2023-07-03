@@ -47,7 +47,7 @@ const schema = new mongoose.Schema({
   subscription: [
     {
       id: String,
-      status: String,
+      // status: String,
       course_id: String,
       poster: String,
     },

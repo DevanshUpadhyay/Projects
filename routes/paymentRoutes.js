@@ -2,7 +2,7 @@ import express from "express";
 import {
   buySubscription,
   cancelSubscription,
-  getPayerId,
+  // getPayerId,
   getRazorPayKey,
   paymentVerification,
 } from "../controllers/paymentController.js";
@@ -10,7 +10,7 @@ import { isAuthenticatedUser } from "../middlewares/auth.js";
 
 const router = express.Router();
 // Buy subscription
-router.route("/subscribe/:id").get(isAuthenticatedUser, buySubscription);
+router.route("/subscribe/:id/:pid").get(isAuthenticatedUser, buySubscription);
 // verify payment and save reference in database
 // router.route("/subscribe/:id").get(isAuthenticatedUser, buySubscription);
 router
@@ -22,5 +22,5 @@ router.route("/razorpaykey").get(getRazorPayKey);
 router
   .route("/subscribe/cancel")
   .delete(isAuthenticatedUser, cancelSubscription);
-router.route("/payment").post(isAuthenticatedUser, getPayerId);
+// router.route("/payment").post(isAuthenticatedUser, getPayerId);
 export default router;

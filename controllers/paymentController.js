@@ -4,42 +4,42 @@ import { Payment } from "../models/Payment.js";
 import { instance } from "../server.js";
 import crypto from "crypto";
 import { Course } from "../models/Course.js";
-export const buySubscription = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-  const course = await Course.findById(req.params.id);
-  if (!course) {
-    return next(new ErrorHandler("Invalid Course Id", 404));
-  }
-  // const course_id=req.params.id;
-  if (user.role === "admin") {
-    return next(new ErrorHandler("Admin can't buy subscription", 400));
-  }
-  const plan_id = process.env.PLAN_ID || "plan_LRiPbl3X6XMRlz";
+// export const buySubscription = catchAsyncErrors(async (req, res, next) => {
+//   const user = await User.findById(req.user._id);
+//   const course = await Course.findById(req.params.id);
+//   if (!course) {
+//     return next(new ErrorHandler("Invalid Course Id", 404));
+//   }
+//   // const course_id=req.params.id;
+//   if (user.role === "admin") {
+//     return next(new ErrorHandler("Admin can't buy subscription", 400));
+//   }
+//   const plan_id = process.env.PLAN_ID || "plan_LRiPbl3X6XMRlz";
 
-  const subscription = await instance.subscriptions.create({
-    plan_id,
-    customer_notify: 1,
-    total_count: 12,
-  });
-  // user.subscription.id = subscription.id;
-  // user.subscription.status = subscription.status;
-  // user.subscription.course_id = req.params.id;
+//   const subscription = await instance.subscriptions.create({
+//     plan_id,
+//     customer_notify: 1,
+//     total_count: 12,
+//   });
+//   // user.subscription.id = subscription.id;
+//   // user.subscription.status = subscription.status;
+//   // user.subscription.course_id = req.params.id;
 
-  user.subscription.push({
-    id: subscription.id,
-    status: subscription.status,
-    course_id: req.params.id,
-    poster: course.poster.url,
-  });
-  await user.save();
-  course.subscriptions += 1;
-  await course.save();
+//   user.subscription.push({
+//     id: subscription.id,
+//     status: subscription.status,
+//     course_id: req.params.id,
+//     poster: course.poster.url,
+//   });
+//   await user.save();
+//   course.subscriptions += 1;
+//   await course.save();
 
-  res.status(201).json({
-    success: true,
-    subscriptionId: subscription.id,
-  });
-});
+//   res.status(201).json({
+//     success: true,
+//     subscriptionId: subscription.id,
+//   });
+// });
 // payment verification
 export const paymentVerification = catchAsyncErrors(async (req, res, next) => {
   const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
@@ -102,14 +102,49 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
   });
 });
 // paypal integration
-export const getPayerId = catchAsyncErrors(async (req, res, next) => {
-  // const { PayerID } = req.query;
-  const user = await User.findById(req.user._id);
-  user.payerId = req.query.PayerID;
-  await user.save();
+// export const getPayerId = catchAsyncErrors(async (req, res, next) => {
+//   const { PayerID } = req.body;
+//   const user = await User.findById(req.user._id);
+//   user.payerId = PayerID;
+//   await user.save();
 
-  res.status(200).json({
+//   res.status(200).json({
+//     success: true,
+//     message: "Subscribed Successfully",
+//   });
+// });
+
+export const buySubscription = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(new ErrorHandler("Invalid Course Id", 404));
+  }
+  if (user.role === "admin") {
+    return next(new ErrorHandler("Admin can't buy subscription", 400));
+  }
+
+  let duplicate = false;
+  for (let i = 0; i < user.subscription.length; i++) {
+    if (String(user.subscription[i].course_id) === String(req.params.id)) {
+      duplicate = true;
+      break;
+    }
+  }
+  if (!duplicate) {
+    user.subscription.push({
+      id: req.params.pid,
+      course_id: req.params.id,
+      poster: course.poster.url,
+    });
+    user.plan = "active";
+    await user.save();
+    course.subscriptions += 1;
+    await course.save();
+  }
+
+  res.status(201).json({
     success: true,
-    message: "Subscribed Successfully",
+    subscriptionId: req.params.pid,
   });
 });
