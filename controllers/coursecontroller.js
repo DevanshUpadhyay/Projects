@@ -22,9 +22,8 @@ export const getAllCourses = catchAsyncErrors(async (req, res, next) => {
       $regex: category,
       $options: "i",
     },
-  })
-    .select("-lectures")
-    .sort({ createdAt: "desc" });
+  }).select("-lectures");
+  // .sort({ createdAt: "desc" });
   res.status(200).json({
     success: true,
     courses,
