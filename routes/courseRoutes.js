@@ -38,16 +38,16 @@ router
   .get(isAuthenticatedUser, getCourseLectures)
   .post(isAuthenticatedUser, authorizeAdmin, singleUpload, addlecture)
   .delete(isAuthenticatedUser, authorizeAdmin, deleteCourse);
-router.route("/coursedemo/:id").get(isAuthenticatedUser, getDemoLecture);
+router.route("/coursedemo/:id").get(getDemoLecture);
 router
   .route("/courselearning/:id")
   .post(isAuthenticatedUser, authorizeAdmin, addCourseLearnings)
-  .get(isAuthenticatedUser, getCourseLearning);
+  .get(getCourseLearning);
 
 router
   .route("/coursecontent/:id")
   .post(isAuthenticatedUser, authorizeAdmin, addCourseContent)
-  .get(isAuthenticatedUser, getCourseContent);
+  .get(getCourseContent);
 // router
 //   .route("/lecture")
 //   .delete(isAuthenticatedUser, authorizeAdmin, deleteLecture);
