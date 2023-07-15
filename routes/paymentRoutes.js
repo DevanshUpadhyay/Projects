@@ -2,6 +2,7 @@ import express from "express";
 import {
   buySubscription,
   cancelSubscription,
+
   // getPayerId,
   getRazorPayKey,
   paymentVerification,
@@ -10,7 +11,7 @@ import { isAuthenticatedUser } from "../middlewares/auth.js";
 
 const router = express.Router();
 // Buy subscription
-router.route("/subscribe/:id/:pid").get(isAuthenticatedUser, buySubscription);
+router.route("/subscribe").post(isAuthenticatedUser, buySubscription);
 // verify payment and save reference in database
 // router.route("/subscribe/:id").get(isAuthenticatedUser, buySubscription);
 router
@@ -23,4 +24,8 @@ router
   .route("/subscribe/cancel")
   .delete(isAuthenticatedUser, cancelSubscription);
 // router.route("/payment").post(isAuthenticatedUser, getPayerId);
+// paypal integration
+// router.route("/orders").post(createOrder);
+// router.route("/orders/:orderID/capture").post(capturePayment);
+
 export default router;

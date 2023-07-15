@@ -4,6 +4,7 @@ import { Payment } from "../models/Payment.js";
 import { instance } from "../server.js";
 import crypto from "crypto";
 import { Course } from "../models/Course.js";
+import fetch from "node-fetch";
 // export const buySubscription = catchAsyncErrors(async (req, res, next) => {
 //   const user = await User.findById(req.user._id);
 //   const course = await Course.findById(req.params.id);
@@ -115,8 +116,9 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
 // });
 
 export const buySubscription = catchAsyncErrors(async (req, res, next) => {
+  const { courseId, payerId, createdAt, email_address } = req.body;
   const user = await User.findById(req.user._id);
-  const course = await Course.findById(req.params.id);
+  const course = await Course.findById(courseId);
   if (!course) {
     return next(new ErrorHandler("Invalid Course Id", 404));
   }
@@ -126,16 +128,17 @@ export const buySubscription = catchAsyncErrors(async (req, res, next) => {
 
   let duplicate = false;
   for (let i = 0; i < user.subscription.length; i++) {
-    if (String(user.subscription[i].course_id) === String(req.params.id)) {
+    if (String(user.subscription[i].course_id) === String(courseId)) {
       duplicate = true;
       break;
     }
   }
   if (!duplicate) {
     user.subscription.push({
-      id: req.params.pid,
-      course_id: req.params.id,
-      poster: course.poster.url,
+      payer_id: payerId,
+      course_id: courseId,
+      email_address: email_address,
+      createdAt: createdAt,
     });
     user.plan = "active";
     await user.save();
@@ -145,6 +148,110 @@ export const buySubscription = catchAsyncErrors(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    subscriptionId: req.params.pid,
+    message: "Subscribed Successfully",
   });
 });
+// paypal integration
+// const { CLIENT_ID, APP_SECRET } = process.env;
+// const CLIENT_ID =
+//   "AXxatcVnSjn8hXDurzxEwQREX6pSdzRkXexK09AjG2mDN-0SeQG0GdXtKo_FymHutolwtnS48NVV1BI1";
+// const APP_SECRET =
+//   "EHMqMGHB4l1rdbapgelVrXNwnTRcCzN_WrcLzvM1T1lUL9RR2Kla_X2rfYwRBEiU2G8cN_HiwfCr-tLt";
+// const base = "https://api-m.sandbox.paypal.com";
+
+// export const generateAccessToken = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
+
+//     const response = await fetch(`${base}/v1/oauth2/token`, {
+//       method: "post",
+//       body: "grant_type=client_credentials",
+//       headers: {
+//         Authorization: `Basic ${auth}`,
+//       },
+//     });
+
+//     const data = await response.json();
+
+//     return data.access_token;
+//   } catch (error) {
+//     console.error("Failed to generate Access Token:", error);
+//   }
+// });
+
+// export const createOrder = catchAsyncErrors(async (req, res, next) => {
+//   console.log("qwerty");
+//   const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
+
+//   const newresponse = await fetch(`${base}/v1/oauth2/token`, {
+//     method: "post",
+//     body: "grant_type=client_credentials",
+//     headers: {
+//       Authorization: `Basic ${auth}`,
+//     },
+//   });
+
+//   const data = await newresponse.json();
+
+//   const accessToken = data.access_token;
+
+//   const url = `${base}/v2/checkout/orders`;
+//   const payload = {
+//     intent: "CAPTURE",
+//     purchase_units: [
+//       {
+//         amount: {
+//           currency_code: "USD",
+//           value: "149",
+//         },
+//       },
+//     ],
+//   };
+
+//   const response = await fetch(url, {
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//     method: "POST",
+//     body: JSON.stringify(payload),
+//   });
+
+//   return handleResponse(response);
+// });
+// export const capturePayment = catchAsyncErrors(async (req, res, next) => {
+//   const { orderID } = req.params;
+
+//   const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
+
+//   const newresponse = await fetch(`${base}/v1/oauth2/token`, {
+//     method: "post",
+//     body: "grant_type=client_credentials",
+//     headers: {
+//       Authorization: `Basic ${auth}`,
+//     },
+//   });
+
+//   const data = await newresponse.json();
+
+//   const accessToken = data.access_token;
+//   const url = `${base}/v2/checkout/orders/${orderID}/capture`;
+
+//   const response = await fetch(url, {
+//     method: "post",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//   });
+
+//   return handleResponse(response);
+// });
+// async function handleResponse(response) {
+//   if (response.status === 200 || response.status === 201) {
+//     return response.json();
+//   }
+
+//   const errorMessage = await response.text();
+//   throw new Error(errorMessage);
+// }

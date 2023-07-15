@@ -11,7 +11,7 @@ import { Stats } from "../models/Stats.js";
 
 // register
 export const register = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, referralCode } = req.body;
   const file = req.file;
 
   if (!name || !email || !password) {
@@ -21,6 +21,34 @@ export const register = catchAsyncErrors(async (req, res, next) => {
   if (user) {
     return next(new ErrorHandler("User Already Exist", 409));
   }
+  if (referralCode) {
+    var referral = await User.findOne({ referralCode });
+    if (!referral) {
+      return next(new ErrorHandler("Referral Code is invalid", 401));
+    }
+    referral.referrals.push({
+      userName: name,
+    });
+    await referral.save();
+  }
+
+  // referral code generator
+  function randomString() {
+    //initialize a variable having alpha-numeric characters
+    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+
+    //specify the length for the new string to be generated
+    var string_length = 8;
+    var randomstring = "";
+
+    //put a loop to select a character randomly in each iteration
+    for (var i = 0; i < string_length; i++) {
+      var rnum = Math.floor(Math.random() * chars.length);
+      randomstring += chars.substring(rnum, rnum + 1);
+    }
+    return randomstring;
+  }
+  let code = randomString();
 
   if (file) {
     const fileUri = getDataUri(file);
@@ -34,6 +62,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
       },
+      referralCode: code,
     });
   } else {
     user = await User.create({
@@ -44,6 +73,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         public_id: "wio3q9ttzqfj66po9yoo",
         url: "https://res.cloudinary.com/dcej7jjak/image/upload/v1680251049/wio3q9ttzqfj66po9yoo.png",
       },
+      referralCode: code,
     });
   }
 

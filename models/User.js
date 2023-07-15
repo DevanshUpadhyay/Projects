@@ -43,10 +43,10 @@ const schema = new mongoose.Schema({
   },
   subscription: [
     {
-      id: String,
-      // status: String,
+      payer_id: String,
+      email_address: String,
       course_id: String,
-      poster: String,
+      createdAt: Date,
     },
   ],
   avatar: {
@@ -68,6 +68,20 @@ const schema = new mongoose.Schema({
       poster: String,
     },
   ],
+  referralCode: {
+    type: String,
+    default: null,
+  },
+  referrals: [
+    {
+      userName: String,
+      status: {
+        type: String,
+        default: null,
+      },
+    },
+  ],
+
   createdAt: {
     type: Date,
     default: Date.now(),
