@@ -118,7 +118,7 @@ async function handleResponse(response) {
   throw new Error(errorMessage);
 }
 
-app.post("/orders", async (req, res) => {
+app.post("/api/v1/orders", async (req, res) => {
   try {
     const response = await createOrder();
     res.json(response);
@@ -128,7 +128,7 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-app.post("/orders/:orderID/capture", async (req, res) => {
+app.post("/api/v1/orders/:orderID/capture", async (req, res) => {
   try {
     const { orderID } = req.params;
     const response = await capturePayment(orderID);
