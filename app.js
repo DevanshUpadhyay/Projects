@@ -33,7 +33,6 @@ app.use("/api/v1", course);
 app.use("/api/v1", user);
 app.use("/api/v1", payment);
 app.use("/api/v1", other);
-export default app;
 
 app.get("/", (req, res) => {
   res.send(
@@ -142,3 +141,4 @@ app.post("/api/v1/orders/:orderID/capture", async (req, res) => {
   }
 });
 app.use(ErrorMiddleware);
+export default app;
