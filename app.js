@@ -71,8 +71,8 @@ const createOrder = async () => {
     purchase_units: [
       {
         amount: {
-          currency_code: "USD",
-          value: "0.1",
+          currency_code: "INR",
+          value: "10",
         },
       },
     ],
