@@ -39,12 +39,13 @@ app.get("/", (req, res) => {
     `<h1>Server is Working Fine. Please Click <a href=${process.env.FRONTEND_URL}>here</a> to visit the Frontend </h1>`
   );
 });
+// const CLIENT_ID = process.env.CLIENT_ID;
+// const APP_SECRET = process.env.APP_SECRET;
+// const base = process.env.BASE;
 const CLIENT_ID =
   "AXxatcVnSjn8hXDurzxEwQREX6pSdzRkXexK09AjG2mDN-0SeQG0GdXtKo_FymHutolwtnS48NVV1BI1";
-const APP_SECRET =
-  "EHMqMGHB4l1rdbapgelVrXNwnTRcCzN_WrcLzvM1T1lUL9RR2Kla_X2rfYwRBEiU2G8cN_HiwfCr-tLt";
+const APP_SECRET = process.env.APP_SECRET;
 const base = "https://api-m.sandbox.paypal.com";
-
 const generateAccessToken = async () => {
   try {
     const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
