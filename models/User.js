@@ -43,10 +43,11 @@ const schema = new mongoose.Schema({
   },
   subscription: [
     {
+      transaction_id: String,
       payer_id: String,
       email_address: String,
       course_id: String,
-      createdAt: Date,
+      transaction_at: Date,
     },
   ],
   avatar: {

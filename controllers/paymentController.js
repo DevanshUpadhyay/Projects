@@ -116,7 +116,8 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
 // });
 
 export const buySubscription = catchAsyncErrors(async (req, res, next) => {
-  const { courseId, payerId, createdAt, email_address } = req.body;
+  const { courseId, payerId, createdAt, emailAddress, transactionId } =
+    req.body;
   const user = await User.findById(req.user._id);
   const course = await Course.findById(courseId);
   if (!course) {
@@ -135,10 +136,11 @@ export const buySubscription = catchAsyncErrors(async (req, res, next) => {
   }
   if (!duplicate) {
     user.subscription.push({
+      transaction_id: transactionId,
       payer_id: payerId,
       course_id: courseId,
-      email_address: email_address,
-      createdAt: createdAt,
+      email_address: emailAddress,
+      transaction_at: createdAt,
     });
     user.plan = "active";
     await user.save();

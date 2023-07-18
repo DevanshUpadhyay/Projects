@@ -43,9 +43,9 @@ app.get("/", (req, res) => {
 // const APP_SECRET = process.env.APP_SECRET;
 // const base = process.env.BASE;
 const CLIENT_ID =
-  "AXxatcVnSjn8hXDurzxEwQREX6pSdzRkXexK09AjG2mDN-0SeQG0GdXtKo_FymHutolwtnS48NVV1BI1";
+  "AafCCqfG7VCMmjpt-TM-Qu4aCitft5MeOzM_f8lfGI8gywd6vAgWpVp4kqLBkZWYM2dyNzssMf3AUhlg";
 const APP_SECRET = process.env.APP_SECRET;
-const base = "https://api-m.sandbox.paypal.com";
+const base = "https://api-m.paypal.com";
 const generateAccessToken = async () => {
   try {
     const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
