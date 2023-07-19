@@ -72,7 +72,7 @@ const createOrder = async () => {
       {
         amount: {
           currency_code: "USD",
-          value: "0.1",
+          value: "149",
         },
       },
     ],
