@@ -23,6 +23,7 @@ app.use(
   })
 );
 import course from "./routes/courseRoutes.js";
+import blog from "./routes/blogRoutes.js";
 import user from "./routes/userRoutes.js";
 import payment from "./routes/paymentRoutes.js";
 import other from "./routes/otherRoutes.js";
@@ -33,6 +34,7 @@ app.use("/api/v1", course);
 app.use("/api/v1", user);
 app.use("/api/v1", payment);
 app.use("/api/v1", other);
+app.use("/api/v1", blog);
 
 app.get("/", (req, res) => {
   res.send(

@@ -136,7 +136,7 @@ const schema = new mongoose.Schema({
 
   createdBy: {
     type: String,
-    required: [true, "Enter Course Creator N ame"],
+    required: [true, "Enter Course Creator Name"],
   },
   createdAt: {
     type: Date,
