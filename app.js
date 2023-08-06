@@ -65,7 +65,7 @@ const generateAccessToken = async () => {
     console.error("Failed to generate Access Token:", error);
   }
 };
-const createOrder = async () => {
+const createOrder = async (amount) => {
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders`;
   const payload = {
@@ -74,7 +74,7 @@ const createOrder = async () => {
       {
         amount: {
           currency_code: "USD",
-          value: "149",
+          value: amount,
         },
       },
     ],
@@ -122,7 +122,7 @@ async function handleResponse(response) {
 
 app.post("/api/v1/orders", async (req, res) => {
   try {
-    const response = await createOrder();
+    const response = await createOrder(req.query.amount);
     res.json(response);
   } catch (error) {
     console.error("Failed to create order:", error);

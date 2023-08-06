@@ -21,21 +21,27 @@ export const register = catchAsyncErrors(async (req, res, next) => {
   if (user) {
     return next(new ErrorHandler("User Already Exist", 409));
   }
+  var referralEmail = null;
+  var cashback = 0;
   if (referralCode) {
     var referral = await User.findOne({ referralCode });
     if (!referral) {
       return next(new ErrorHandler("Referral Code is invalid", 401));
     }
+    referralEmail = referral.email;
     referral.referrals.push({
+      userEmail: email,
       userName: name,
+      status: "Registered",
     });
+    cashback = 20;
     await referral.save();
   }
 
   // referral code generator
   function randomString() {
     //initialize a variable having alpha-numeric characters
-    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghiklmnopqrstuvwxyz";
 
     //specify the length for the new string to be generated
     var string_length = 8;
@@ -63,6 +69,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         url: myCloud.secure_url,
       },
       referralCode: code,
+      referredBy: referralEmail,
+      cashback: cashback,
     });
   } else {
     user = await User.create({
@@ -74,6 +82,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         url: "https://res.cloudinary.com/dcej7jjak/image/upload/v1680251049/wio3q9ttzqfj66po9yoo.png",
       },
       referralCode: code,
+      referredBy: referralEmail,
+      cashback: cashback,
     });
   }
 
@@ -169,15 +179,12 @@ export const changePassword = catchAsyncErrors(async (req, res, next) => {
 });
 // change/update profile
 export const updateProfile = catchAsyncErrors(async (req, res, next) => {
-  const { name, email } = req.body;
+  const { name } = req.body;
 
   const user = await User.findById(req.user._id);
 
   if (name) {
     user.name = name;
-  }
-  if (email) {
-    user.email = email;
   }
 
   await user.save();

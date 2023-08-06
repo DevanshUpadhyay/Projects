@@ -30,6 +30,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  cashback: {
+    type: Number,
+    default: 0,
+  },
 
   role: {
     type: String,
@@ -71,11 +75,17 @@ const schema = new mongoose.Schema({
   ],
   referralCode: {
     type: String,
+    unique: true,
+    default: null,
+  },
+  referredBy: {
+    type: String,
     default: null,
   },
   referrals: [
     {
       userName: String,
+      userEmail: String,
       status: {
         type: String,
         default: null,

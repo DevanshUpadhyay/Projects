@@ -125,6 +125,10 @@ const schema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  price: {
+    type: Number,
+    default: 149,
+  },
   numOfVideos: {
     type: Number,
     default: 0,

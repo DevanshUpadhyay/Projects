@@ -133,6 +133,22 @@ export const verifyOtp = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
+
+  if (user.referredBy) {
+    const email = user.referredBy;
+    var referral = await User.findOne({ email });
+    var index = 0;
+    for (let i = 0; i < referral.referrals.length; i++) {
+      if (referral.referrals[i].userEmail === user.email) {
+        index = i;
+        break;
+      }
+    }
+    referral.referrals[index].status = "Verified";
+
+    await referral.save();
+  }
+
   user.verify = true;
   // await user.otp.deleteOne();
   user.otp = null;
