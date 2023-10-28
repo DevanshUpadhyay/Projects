@@ -78,8 +78,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
       email,
       password,
       avatar: {
-        public_id: "wio3q9ttzqfj66po9yoo",
-        url: "https://res.cloudinary.com/dcej7jjak/image/upload/v1680251049/wio3q9ttzqfj66po9yoo.png",
+        public_id: "public_id",
+        url: "url",
       },
       referralCode: code,
       referredBy: referralEmail,
@@ -117,11 +117,11 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", null, {
       expires: new Date(Date.now()),
       // maxAge: -1,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      domain: "https://www.haco.study",
-      path: "/",
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "none",
+      // domain: "https://www.haco.study",
+      // path: "/",
     })
     // .clearCookie("token", {
     //   expires: new Date(Date.now()),

@@ -129,6 +129,10 @@ const schema = new mongoose.Schema({
     type: Number,
     default: 149,
   },
+  overPriced: {
+    type: Number,
+    default: 249,
+  },
   numOfVideos: {
     type: Number,
     default: 0,
