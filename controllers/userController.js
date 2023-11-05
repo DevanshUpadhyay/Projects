@@ -117,11 +117,11 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", null, {
       expires: new Date(Date.now()),
       // maxAge: -1,
-      // httpOnly: true,
-      // secure: true,
-      // sameSite: "none",
-      // domain: "https://www.haco.study",
-      // path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: "https://online-course-psi.vercel.app",
+      path: "/",
     })
     // .clearCookie("token", {
     //   expires: new Date(Date.now()),
